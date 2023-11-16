@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Billetera Virtual</title>
+    <!-- bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <!-- css -->
+    <link rel="stylesheet" href="stylesheet.css">
+</head>
+<body>
+    <!-- REGISTRO DE USUSARIO -->
+    <div id="registro" class="oculto">
+        <h1>Registro</h1>
+        <form id="formularioRegistro">
+            <div class="mb-3">
+              <label for="inputUsuario" class="form-label">Nombre de Usuario</label>
+              <input type="text" class="form-control" id="inputUsuario">
+            </div>
+            <div class="mb-3">
+              <label for="inputContrasenia" class="form-label">Contraseña</label>
+              <input type="password" class="form-control" id="inputContrasenia">
+              <label for="inputConfirmarContrasenia" class="form-label">Confirmar Contraseña</label>
+              <input type="password" class="form-control" id="inputConfirmarContrasenia">
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+          </form>
+    </div>
+
+    <!-- INICIO DE SESION -->
+    <div id="sesion" class="oculto mostrar">
+        <h1>Inicio de Sesión</h1>
+        <form id="inicioSesion">
+            <div class="mb-3">
+              <label for="nombreUsuario" class="form-label">Nombre de Usuario</label>
+              <input type="text" class="form-control" id="nombreUsuario">
+            </div>
+            <div class="mb-3">
+              <label for="contrasenia" class="form-label">Contraseña</label>
+              <input type="password" class="form-control" id="contrasenia">
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+          </form>
+    </div>
+    
+    
+    <!-- Enlace a JavaScript -->
+    <script src="main.js" defer></script>
+</body>
+</html>

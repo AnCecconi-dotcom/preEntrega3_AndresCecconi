@@ -1,0 +1,18 @@
+.oculto {
+    display: none;
+}
+
+#registro {
+    margin: 100px 500px;
+    padding: 100px;
+    border: solid;
+    border-radius: 25px;
+    background-color: #e6eefa;   
+}
+#sesion {
+    margin: 100px 500px;
+    padding: 100px;
+    border: solid;
+    border-radius: 25px;
+    background-color: #e6eefa;   
+}
