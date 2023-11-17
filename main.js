@@ -3,20 +3,27 @@ function inicioSesion(usuarioIngresado, contraseñaIngresada, usuarioRegistrado,
     if (usuarioIngresado == usuarioRegistrado && contraseñaIngresada == contraseñaRegistrada) {
         alert("Bienvenido " + usuarioRegistrado + ". Ya estás listo para operar!");
         document.getElementById('sesion').classList.add('oculto');
+        sessionStorage.setItem('nombreUsuario', usuarioRegistrado);
 
     } else {
         alert("Usuario o contraseña incorrectos. Por favor, inténtelo nuevamente.");
-        
+
         document.getElementById('nombreUsuario').value = "";
         document.getElementById('contrasenia').value = "";
         return;
     }
-    } 
+}
 
+function mostrarSaldo() {
+    const saldoDisponible = document.getElementById('saldoDisponible');
+    saldoDisponible.innerText = `$${saldo}`;
+}
 
 //variables Globales
 let usuarioRegistrado = "";
 let contraseñaRegistrada = "";
+let saldo = 0
+
 
 //PROGRAMA
 document.addEventListener('DOMContentLoaded', function () {
@@ -65,11 +72,31 @@ document.addEventListener('DOMContentLoaded', function () {
         console.log('Contraseña:', contraseñaIngresada);
 
         // Comparar los valores con los datos de registro
-     inicioSesion(usuarioIngresado, contraseñaIngresada, usuarioRegistrado, contraseñaRegistrada);
-     
+        inicioSesion(usuarioIngresado, contraseñaIngresada, usuarioRegistrado, contraseñaRegistrada);
 
+        //guardar variable en local storage para recuperar luego
+        if (usuarioIngresado === usuarioRegistrado && contraseñaIngresada === contraseñaRegistrada) {
+            // Almacenar el nombre de usuario en localStorage
+            localStorage.setItem('nombreUsuario', usuarioRegistrado);
+
+            // Ocultar el formulario de inicio de sesion y mostrar la pagina principal
+            document.getElementById('sesion').classList.add('oculto');
+            document.getElementById('paginaPrincipal').classList.remove('oculto');
+           
+            //Pagina Principal
+            // Mostrar el mensaje de bienvenida con el nombre de usuario y el saldo
+            const nombreUsuario = localStorage.getItem('nombreUsuario');
+            document.getElementById('mensajeBienvenida').innerText = `Hola, ${nombreUsuario}`;
+
+            mostrarSaldo();
+        }
     });
 
+
+
 });
+
+
+
 
 
