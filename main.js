@@ -19,10 +19,22 @@ function mostrarSaldo() {
     saldoDisponible.innerText = `$${saldo}`;
 }
 
+function mostrarSaldoEnDeposito() {
+    const saldoDisponibleDeposito = document.getElementById('saldoDisponibleDeposito');
+    saldoDisponibleDeposito.innerText = `Su saldo actual es $${saldo}`;
+}
+
+function deposito(monto) {
+    saldo += monto;
+    // Actualizar el saldo en el elemento correspondiente en la página
+    mostrarSaldo();
+}
+
 //variables Globales
 let usuarioRegistrado = "";
 let contraseñaRegistrada = "";
-let saldo = 0
+let saldo = 0;
+
 
 
 //PROGRAMA
@@ -91,10 +103,38 @@ document.addEventListener('DOMContentLoaded', function () {
             mostrarSaldo();
         }
     });
+    document.getElementById('botonDeposito').addEventListener('click', function() {
+        //ocultar pagina principal
+        document.getElementById('paginaPrincipal').classList.add('oculto');
+      
+        //mostrar seccion deposito con saldo actualizado
+        document.getElementById('seccionDeposito').classList.remove('oculto');
+        mostrarSaldoEnDeposito();
+   });   
 
+   document.getElementById('montoADepositar').addEventListener('submit', function (event) {
+    event.preventDefault();
+    
+    let nuevoMonto = parseFloat(document.getElementById('monto').value);
 
+    if (!isNaN(nuevoMonto) && nuevoMonto >= 0) {
+        deposito(nuevoMonto);
+        alert('Deposito realizado con exito!');
+        // Limpiar el campo del formulario
+        document.getElementById('monto').value = '';
 
+        // Ocultar la sección de depósito después de realizar el depósito
+        document.getElementById('seccionDeposito').classList.add('oculto');
+        
+        // Mostrar nuevamente la página principal
+        document.getElementById('paginaPrincipal').classList.remove('oculto');
+    } else {
+        // Monto ingresado no válido
+        alert('El monto ingresado no es válido.');
+    }
 });
+});
+
 
 
 
