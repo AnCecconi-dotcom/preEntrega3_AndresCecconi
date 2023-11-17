@@ -94,7 +94,7 @@ document.addEventListener('DOMContentLoaded', function () {
             // Ocultar el formulario de inicio de sesion y mostrar la pagina principal
             document.getElementById('sesion').classList.add('oculto');
             document.getElementById('paginaPrincipal').classList.remove('oculto');
-           
+
             //Pagina Principal
             // Mostrar el mensaje de bienvenida con el nombre de usuario y el saldo
             const nombreUsuario = localStorage.getItem('nombreUsuario');
@@ -103,36 +103,47 @@ document.addEventListener('DOMContentLoaded', function () {
             mostrarSaldo();
         }
     });
-    document.getElementById('botonDeposito').addEventListener('click', function() {
+    document.getElementById('botonDeposito').addEventListener('click', function () {
         //ocultar pagina principal
         document.getElementById('paginaPrincipal').classList.add('oculto');
-      
+
         //mostrar seccion deposito con saldo actualizado
         document.getElementById('seccionDeposito').classList.remove('oculto');
         mostrarSaldoEnDeposito();
-   });   
+    });
 
-   document.getElementById('montoADepositar').addEventListener('submit', function (event) {
-    event.preventDefault();
-    
-    let nuevoMonto = parseFloat(document.getElementById('monto').value);
+    document.getElementById('montoADepositar').addEventListener('submit', function (event) {
+        event.preventDefault();
 
-    if (!isNaN(nuevoMonto) && nuevoMonto >= 0) {
-        deposito(nuevoMonto);
-        alert('Deposito realizado con exito!');
-        // Limpiar el campo del formulario
-        document.getElementById('monto').value = '';
+        let nuevoMonto = parseFloat(document.getElementById('monto').value);
 
-        // Ocultar la sección de depósito después de realizar el depósito
-        document.getElementById('seccionDeposito').classList.add('oculto');
-        
-        // Mostrar nuevamente la página principal
-        document.getElementById('paginaPrincipal').classList.remove('oculto');
-    } else {
-        // Monto ingresado no válido
-        alert('El monto ingresado no es válido.');
-    }
-});
+        if (!isNaN(nuevoMonto) && nuevoMonto > 0) {
+            //Mensaje de confirmacion
+            const confirmacion = confirm(`Usted esta a punto de depositar $${nuevoMonto}. Desea confirmar?`);
+            if (confirmacion) {
+                deposito(nuevoMonto);
+                alert('Deposito realizado con exito!');
+                // Limpiar el campo del formulario
+                document.getElementById('monto').value = '';
+
+                // Ocultar la sección de depósito después de realizar el depósito
+                document.getElementById('seccionDeposito').classList.add('oculto');
+
+                // Mostrar nuevamente la página principal
+                document.getElementById('paginaPrincipal').classList.remove('oculto');
+            } else {
+                // Limpiar el campo del formulario
+                document.getElementById('monto').value = '';
+                //volver a la pagina principal
+                document.getElementById('seccionDeposito').classList.add('oculto');
+                document.getElementById('paginaPrincipal').classList.remove('oculto');
+            }
+
+        } else {
+            // Monto ingresado no válido
+            alert('El monto ingresado no es válido.');
+        }
+    });
 });
 
 
