@@ -68,7 +68,7 @@
       <div class="col-md-6">
         <div class="list-group">
           <button type="button" id="botonDeposito" class="list-group-item list-group-item-action">Depositar</button>
-          <button type="button" class="list-group-item list-group-item-action">Transferir</button>
+          <button type="button" id="botonTransferencias" class="list-group-item list-group-item-action">Transferir</button>
           <button type="button" class="list-group-item list-group-item-action">Plazo Fijo</button>
           <button type="button" class="list-group-item list-group-item-action">Agendar un Contacto</button>
           <button type="button" class="list-group-item list-group-item-action">Ver Agenda</button>
@@ -95,6 +95,22 @@
 
 
   <!-- seccion transferencia -->
+  <div id="seccionTransferencias" class="container mt-5 oculto">
+    <h2>Sección de Transferencias</h2>
+    <form id="formularioTransferencia">
+      <div class="form-group">
+        <label for="aliasCBU">Alias o CBU:</label>
+        <input type="text" class="form-control" id="aliasCBU" required>
+      </div>
+      <div class="form-group">
+        <label for="montoTransferir">Monto a Transferir:</label>
+        <input type="number" class="form-control" id="montoTransferir" required>
+      </div>
+      <button type="submit" class="btn btn-primary">Transferir</button>
+      <button type="button" class="btn btn-secondary" id="cancelarTransferencia">Cancelar</button>
+    </form>
+  </div>
+
   <!-- seccion plazo fijo -->
   <!-- seccion agendar contacto -->
   <!-- seccion agenda -->

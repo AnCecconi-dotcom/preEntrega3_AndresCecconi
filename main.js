@@ -144,6 +144,58 @@ document.addEventListener('DOMContentLoaded', function () {
             alert('El monto ingresado no es válido.');
         }
     });
+
+     // Evento click para mostrar la sección de transferencias
+     document.getElementById('botonTransferencias').addEventListener('click', function () {
+        document.getElementById('paginaPrincipal').classList.add('oculto');
+        document.getElementById('seccionTransferencias').classList.remove('oculto');
+    });
+
+     // Evento submit para el formulario de transferencias
+     document.getElementById('formularioTransferencia').addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        const aliasCBU = document.getElementById('aliasCBU').value;
+        const montoTransferir = parseFloat(document.getElementById('montoTransferir').value);
+
+        // Verificar que el monto a transferir sea menor o igual al saldo disponible
+        if (montoTransferir <= saldo) {
+            // Verificar si el alias o CBU está en la agenda (A REALIZAR)
+            
+            // confirmar la transferencia
+            const confirmacion = confirm(`Usted está a punto de transferir $${montoTransferir} a ${aliasCBU}. ¿Desea confirmar la operación?`);
+            
+            if (confirmacion) {
+                // actualizar saldo
+                saldo -= montoTransferir;
+                mostrarSaldo();
+
+                // alert operación exitosa
+                alert('Transferencia realizada con éxito.');
+
+                // limpiar campos del formulario
+                document.getElementById('aliasCBU').value = '';
+                document.getElementById('montoTransferir').value = '';
+
+                // volver a la página principal
+                document.getElementById('paginaPrincipal').classList.remove('oculto');
+                document.getElementById('seccionTransferencias').classList.add('oculto');
+            }
+        } else {
+            alert('Fondos insuficientes para realizar la transferencia.');
+        }
+    });
+
+    // Botón "Cancelar" en la sección de transferencias
+    document.getElementById('cancelarTransferencia').addEventListener('click', function () {
+        // Limpiar los campos del formulario
+        document.getElementById('aliasCBU').value = '';
+        document.getElementById('montoTransferir').value = '';
+
+        // Volver a la página principal
+        document.getElementById('paginaPrincipal').classList.remove('oculto');
+        document.getElementById('seccionTransferencias').classList.add('oculto');
+    });
 });
 
 
