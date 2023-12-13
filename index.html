@@ -49,7 +49,7 @@
   <!-- PAGINA PRINCIPAL -->
   <div id="paginaPrincipal" class="container oculto">
 
-    <!-- Barra de navegación -->
+    <!-- Barra de navegación (MODIFICAR)-->
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
       <div class="container-fluid">
         <span class="navbar-brand mb-0 h1">Billetera Virtual</span>
@@ -69,10 +69,9 @@
         <div class="list-group">
           <button type="button" id="botonDeposito" class="list-group-item list-group-item-action">Depositar</button>
           <button type="button" id="botonTransferencias" class="list-group-item list-group-item-action">Transferir</button>
-          <button type="button" class="list-group-item list-group-item-action">Plazo Fijo</button>
-          <button type="button" class="list-group-item list-group-item-action">Agendar un Contacto</button>
-          <button type="button" class="list-group-item list-group-item-action">Ver Agenda</button>
-          <button type="button" class="list-group-item list-group-item-action">Ultimos Movimientos</button>
+          <button type="button" id="botonPlazoFijo" class="list-group-item list-group-item-action">Plazo Fijo</button>
+          <button type="button" id="botonContacto" class="list-group-item list-group-item-action">Agendar un Contacto</button>
+          <button type="button" id="botonMovimientos" class="list-group-item list-group-item-action">Ultimos Movimientos</button>
           <!-- Agrega más botones según tus necesidades -->
         </div>
       </div>
@@ -90,9 +89,9 @@
         <input type="number" class="form-control" id="monto">
       </div>
       <button type="submit" class="btn btn-primary">Depositar</button>
+      <button type="button" class="btn btn-secondary" id="cancelarDeposito">Cancelar</button>
     </form>
   </div>
-
 
   <!-- seccion transferencia -->
   <div id="seccionTransferencias" class="container mt-5 oculto">
@@ -109,11 +108,61 @@
       <button type="submit" class="btn btn-primary">Transferir</button>
       <button type="button" class="btn btn-secondary" id="cancelarTransferencia">Cancelar</button>
     </form>
+
+    <!-- boton agenda  dentro de transferencias-->
+    <button type="button" id="botonAgenda" class="list-group-item list-group-item-action">Ver Agenda</button>
+
   </div>
 
   <!-- seccion plazo fijo -->
+  <div id="seccionPlazoFijo" class="container mt-5 oculto">
+    <h2>Inversiones / Plazo Fijo</h2>
+    <form id="formularioPlazoFijo">
+      <div class="form-group">
+        <label for="montoAInvertir">Ingrese el monto que desea invertir</label>
+        <input type="number" class="form-control" id="montoAInvertir" required>
+      </div>
+      <div class="form-group">
+        <select class="form-select" id="opcionPlazo" aria-label="Default select example">
+          <option selected>Seleccione el plazo en dias</option>
+          <option value="1">30</option>
+          <option value="2">90</option>
+          <option value="3">180</option>
+          <option value="4">270</option>
+          <option value="5">360</option>
+        </select>
+      </div>
+      <button type="submit" class="btn btn-primary">Constituir Plazo Fijo</button>
+      <button type="button" class="btn btn-secondary" id="cancelarPlazoFijo">Cancelar</button>
+    </form>
+  </div>
+
   <!-- seccion agendar contacto -->
+  <div id="seccionAgendarContacto" class="oculto">
+    <form id="formularioContacto">
+        <div class="mb-3">
+            <label for="nombre" class="form-label">Nombre</label>
+            <input type="text" class="form-control" id="nombre" required>
+        </div>
+        <div class="mb-3">
+            <label for="alias" class="form-label">Alias</label>
+            <input type="text" class="form-control" id="alias" required>
+        </div>
+        <div class="mb-3">
+          <label for="cbu" class="form-label">CBU</label>
+          <input type="number" class="form-control" id="cbu" required>
+      </div>
+        <button type="submit" class="btn btn-primary">Guardar Contacto</button>
+        <button type="button" class="btn btn-secondary" id="cancelarAgendar">Cancelar</button>
+    </form>
+</div>
+
   <!-- seccion agenda -->
+  <div id="seccionAgenda" class="oculto">
+    <h3>Agenda de Contactos</h3>
+    <div id="agenda"></div>
+</div>
+
   <!-- seccion ultimos movimientos -->
 
 
