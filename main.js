@@ -199,6 +199,8 @@ document.addEventListener('DOMContentLoaded', function () {
     });
     // botón "Cancelar" en la sección deposito
     document.getElementById('cancelarDeposito').addEventListener('click', function () {
+        //Limpiar campo del formulario
+        document.getElementById('monto').value = '';
 
         // volver a la página principal
         document.getElementById('seccionDeposito').classList.add('oculto');
