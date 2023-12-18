@@ -1,12 +1,22 @@
 //funciones
 function inicioSesion(usuarioIngresado, contraseñaIngresada, usuarioRegistrado, contraseñaRegistrada) {
     if (usuarioIngresado == usuarioRegistrado && contraseñaIngresada == contraseñaRegistrada) {
-        alert("Bienvenido " + usuarioRegistrado + ". Ya estás listo para operar!");
+        Swal.fire({
+            title: 'Bienvenido ' + usuarioRegistrado + '!',
+            text: 'Ya estás listo para operar',
+            icon: 'success',
+            confirmButtonText: 'Aceptar'
+        });
         document.getElementById('sesion').classList.add('oculto');
         sessionStorage.setItem('nombreUsuario', usuarioRegistrado);
 
     } else {
-        alert("Usuario o contraseña incorrectos. Por favor, inténtelo nuevamente.");
+        Swal.fire({
+            title: 'Error',
+            text: 'Usuario o contraseña incorrectos. Inténtelo nuevamente',
+            icon: 'error',
+            confirmButtonText: 'Aceptar'
+        });
 
         document.getElementById('nombreUsuario').value = "";
         document.getElementById('contrasenia').value = "";
@@ -28,6 +38,7 @@ function deposito(monto) {
     saldo += monto;
     // Actualizar el saldo en el elemento correspondiente en la página
     mostrarSaldo();
+    registrarMovimiento('Deposito', 'Deposito realizado', monto);
 }
 
 function agregarContacto() {
@@ -37,7 +48,12 @@ function agregarContacto() {
 
     // verificar si se completó al menos uno de los campos
     if (nombre === '' && alias === '' && cbu === '') {
-        alert('Por favor, complete al menos uno de los campos (Alias o CBU).');
+        Swal.fire({
+            title: 'Error',
+            text: 'Por favor, complete todos los campos',
+            icon: 'warning',
+            confirmButtonText: 'Aceptar'
+        });
         return null;
     }
     return {
@@ -66,6 +82,46 @@ function mostrarAgenda() {
     });
 }
 
+function registrarMovimiento(tipo, descripcion, monto) {
+    const nuevoMovimiento = {
+        tipo: tipo,
+        descripcion: descripcion,
+        monto: monto,
+        fecha: new Date().toLocaleString(),
+    };
+    movimientos.unshift(nuevoMovimiento);
+
+    if (movimientos.length > 15) {
+        movimientos.pop();
+    }
+}
+
+function mostrarUltimosMovimientos() {
+    const seccionUltimosMovimientos = document.getElementById('seccionUltimosMovimientos');
+    const listaMovimientos = document.getElementById('listaMovimientos');
+
+    // Iterar sobre el array de movimientos y mostrar cada movimiento en la lista
+    movimientos.forEach(movimiento => {
+        const itemMovimiento = document.createElement('div');
+        itemMovimiento.innerHTML = `
+            <p>Tipo: ${movimiento.tipo}</p>
+            <p>Descripción: ${movimiento.descripcion}</p>
+            <p>Monto: $${movimiento.monto}</p>
+            <p>Fecha: ${movimiento.fecha}</p>
+            <hr>
+        `;
+        listaMovimientos.appendChild(itemMovimiento);
+    });
+
+    // Mostrar la sección de Últimos Movimientos
+    seccionUltimosMovimientos.classList.remove('oculto');
+}
+
+function limpiarUltimosMovimientos() {
+    const listaMovimientos = document.getElementById('listaMovimientos');
+    listaMovimientos.innerHTML = ''; // Limpiar la lista de movimientos
+}
+
 //clases
 //clase Contacto
 class Contacto {
@@ -84,6 +140,11 @@ let agenda = []; // array agenda contactos
 let nombre = "";
 let alias = "";
 let cbu = "";
+let montoAInvertir = "";
+let opcionPlazo = "";
+let plazosFijos = []; //array plazos fijos 
+let movimientos = []; //array movimientos
+
 
 
 
@@ -105,23 +166,40 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // verificar campos vacíos
         if (usuario == "" || contraseña == "" || confirmarContrasenia == "") {
-            alert('Por favor, complete todos los campos.');
+            Swal.fire({
+                title: 'Error',
+                text: 'Por favor, complete todos los campos',
+                icon: 'warning',
+                confirmButtonText: 'Aceptar'
+            });
             return;
         }
 
         // verificar contraseña
         if (contraseña !== confirmarContrasenia) {
-            alert('Las contraseñas no coinciden. Inténtelo de nuevo.');
+            Swal.fire({
+                title: 'Error',
+                text: 'Las contraseñas no coinciden. Inténtelo de nuevo',
+                icon: 'warning',
+                confirmButtonText: 'Aceptar'
+            });
             return;
         }
         usuarioRegistrado = usuario;
         contraseñaRegistrada = contraseña;
-        alert('Registro exitoso! Ahora seras redirigido a la página principal para iniciar sesión')
+        Swal.fire({
+            title: 'Registro Exitoso!',
+            text: 'Ahora seras redirigido a la página principal para iniciar sesión',
+            icon: 'success',
+            confirmButtonText: 'Aceptar'
+        });
+
 
         // Ooultar el formulario de registro y mostrar el inicio de sesión
         document.getElementById('registro').classList.add('oculto');
         document.getElementById('sesion').classList.remove('oculto');
     });
+
     // formulario de inicio de sesión
     document.getElementById('inicioSesion').addEventListener('submit', function (event) {
         event.preventDefault();
@@ -154,7 +232,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-
     // evento click seccion deposito
     document.getElementById('botonDeposito').addEventListener('click', function () {
         //ocultar pagina principal
@@ -164,6 +241,7 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('seccionDeposito').classList.remove('oculto');
         mostrarSaldoEnDeposito();
     });
+
     //evento submit formulario deposito
     document.getElementById('montoADepositar').addEventListener('submit', function (event) {
         event.preventDefault();
@@ -172,31 +250,58 @@ document.addEventListener('DOMContentLoaded', function () {
 
         if (!isNaN(nuevoMonto) && nuevoMonto > 0) {
             //mensaje de confirmacion
-            const confirmacion = confirm(`Usted esta a punto de depositar $${nuevoMonto}. Desea confirmar?`);
-            if (confirmacion) {
-                deposito(nuevoMonto);
-                alert('Deposito realizado con exito!');
-                // limpiar el campo del formulario
-                document.getElementById('monto').value = '';
+            const confirmacion = Swal.fire({
+                title: 'Verifique los Datos',
+                text: `Esta por depositar $${nuevoMonto}, esta seguro?`,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Sí',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // El usuario confirmó la acción
+                    deposito(nuevoMonto);
+                    Swal.fire({
+                        title: 'Operacion Exitosa',
+                        text: 'Depósito realizado exitosamente',
+                        icon: 'success',
+                        confirmButtonText: 'Aceptar'
+                    });
+                    // limpiar el campo del formulario
+                    document.getElementById('monto').value = '';
 
-                // ocultar la sección de depósito después de realizar el depósito
-                document.getElementById('seccionDeposito').classList.add('oculto');
+                    // ocultar la sección de depósito después de realizar el depósito
+                    document.getElementById('seccionDeposito').classList.add('oculto');
 
-                // mostrar nuevamente la página principal
-                document.getElementById('paginaPrincipal').classList.remove('oculto');
-            } else {
-                // limpiar el campo del formulario
-                document.getElementById('monto').value = '';
-                //volver a la pagina principal
-                document.getElementById('seccionDeposito').classList.add('oculto');
-                document.getElementById('paginaPrincipal').classList.remove('oculto');
-            }
+                    // mostrar nuevamente la página principal
+                    document.getElementById('paginaPrincipal').classList.remove('oculto');
+
+                } else if (result.dismiss === Swal.DismissReason.cancel) {
+                    // El usuario canceló la acción
+                    Swal.fire(
+                        'Cancelado',
+                        'La acción ha sido cancelada.',
+                        'error'
+                    );
+                    // limpiar el campo del formulario
+                    document.getElementById('monto').value = '';
+                    //volver a la pagina principal
+                    document.getElementById('seccionDeposito').classList.add('oculto');
+                    document.getElementById('paginaPrincipal').classList.remove('oculto');
+                }
+            });
 
         } else {
             // monto ingresado no válido
-            alert('El monto ingresado no es válido.');
+            Swal.fire({
+                title: 'Error',
+                text: 'El monto ingresado no es válido',
+                icon: 'warning',
+                confirmButtonText: 'Aceptar'
+            });
         }
     });
+
     // botón "Cancelar" en la sección deposito
     document.getElementById('cancelarDeposito').addEventListener('click', function () {
         //Limpiar campo del formulario
@@ -213,6 +318,7 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('paginaPrincipal').classList.add('oculto');
         document.getElementById('seccionTransferencias').classList.remove('oculto');
     });
+
     // evento submit formulario de transferencias
     document.getElementById('formularioTransferencia').addEventListener('submit', function (event) {
         event.preventDefault();
@@ -225,28 +331,48 @@ document.addEventListener('DOMContentLoaded', function () {
             // verificar si el alias o CBU está en la agenda (A REALIZAR)
 
             // confirmar la transferencia
-            const confirmacion = confirm(`Usted está a punto de transferir $${montoTransferir} a ${aliasCBU}. ¿Desea confirmar la operación?`);
+            const confirmacion = Swal.fire({
+                title: 'Verifique los Datos',
+                text: `Usted está a punto de transferir $${montoTransferir} a ${aliasCBU}. ¿Desea confirmar la operación?`,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Sí',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // actualizar saldo
+                    saldo -= montoTransferir;
+                    mostrarSaldo();
+                    registrarMovimiento('Transferencia', `Transferencia a ${aliasCBU}`, montoTransferir);
 
-            if (confirmacion) {
-                // actualizar saldo
-                saldo -= montoTransferir;
-                mostrarSaldo();
+                    // alert operación exitosa
+                    Swal.fire({
+                        title: 'Operación Exitosa!',
+                        text: 'Transferencia realizada exitosamente',
+                        icon: 'success',
+                        confirmButtonText: 'Aceptar'
+                    });
 
-                // alert operación exitosa
-                alert('Transferencia realizada con éxito.');
+                    // limpiar campos del formulario
+                    document.getElementById('aliasCBU').value = '';
+                    document.getElementById('montoTransferir').value = '';
 
-                // limpiar campos del formulario
-                document.getElementById('aliasCBU').value = '';
-                document.getElementById('montoTransferir').value = '';
+                    // volver a la página principal
+                    document.getElementById('paginaPrincipal').classList.remove('oculto');
+                    document.getElementById('seccionTransferencias').classList.add('oculto');
 
-                // volver a la página principal
-                document.getElementById('paginaPrincipal').classList.remove('oculto');
-                document.getElementById('seccionTransferencias').classList.add('oculto');
-            }
-        } else {
-            alert('Fondos insuficientes para realizar la transferencia.');
+                } else if (result.dismiss === Swal.DismissReason.cancel) {
+                    // El usuario canceló la acción
+                    Swal.fire(
+                        'Cancelado',
+                        'La acción ha sido cancelada.',
+                        'error'
+                    );
+                }
+            });
         }
     });
+
     // botón "Cancelar" en la sección transferencias
     document.getElementById('cancelarTransferencia').addEventListener('click', function () {
         // Limpiar los campos del formulario
@@ -263,19 +389,20 @@ document.addEventListener('DOMContentLoaded', function () {
     // Evento click en el botón "Agenda" para mostrar/ocultar la agenda de contactos
     document.getElementById('botonAgenda').addEventListener('click', function () {
         const seccionAgenda = document.getElementById('seccionAgenda');
-        if (seccionAgenda.classList.contains('oculto')){
+        if (seccionAgenda.classList.contains('oculto')) {
             seccionAgenda.classList.remove('oculto');
             mostrarAgenda();
         } else {
             seccionAgenda.classList.add('oculto');
         }
     });
-    
+
     //evento click seccion agendar contacto
     document.getElementById('botonContacto').addEventListener('click', function () {
         document.getElementById('paginaPrincipal').classList.add('oculto');
         document.getElementById('seccionAgendarContacto').classList.remove('oculto');
     });
+
     //evento submit formulario contacto
     document.getElementById('formularioContacto').addEventListener('submit', function (event) {
         event.preventDefault();
@@ -302,6 +429,7 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('paginaPrincipal').classList.remove('oculto');
 
     });
+
     // botón "Cancelar" en la sección de Contacto
     document.getElementById('cancelarAgendar').addEventListener('click', function () {
 
@@ -317,28 +445,125 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     //evento click seccion Plazo Fijo
-
-    document.getElementById('botonPlazoFijo').addEventListener('click', function(){
+    document.getElementById('botonPlazoFijo').addEventListener('click', function () {
+        console.log('Click en el botón "Plazo Fijo"');
         document.getElementById('paginaPrincipal').classList.add('oculto');
         document.getElementById('seccionPlazoFijo').classList.remove('oculto');
 
-
-  
     });
+
+    //confirmacion de Plazo Fijo
+    //confirmacion de Plazo Fijo
+    document.getElementById('formularioPlazoFijo').addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        console.log('Click en el botón "Confirmación Plazo Fijo"');
+        const montoAInvertir = parseFloat(document.getElementById('montoAInvertir').value);
+        const plazoElegido = parseInt(document.getElementById('plazoElegido').value);
+
+        const opcionesPlazo = [30, 90, 180, 270, 360];
+
+        if (montoAInvertir <= saldo) {
+            if (opcionesPlazo.includes(plazoElegido)) {
+                console.log('Plazo elegido:', plazoElegido);
+                const tasaAnual = 1.10; // 110% anual
+                const montoAPlazo = montoAInvertir + (montoAInvertir * (tasaAnual * plazoElegido / 365));
+
+                Swal.fire({
+                    title: 'Verifique los Datos',
+                    text: `Está a punto de invertir $${montoAInvertir} a plazo fijo por ${plazoElegido} días y recibirá $${montoAPlazo.toFixed(2)}. ¿Desea confirmar?`,
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonText: 'Sí',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        saldo -= montoAInvertir;
+                        mostrarSaldo();
+                        registrarMovimiento('Plazo Fijo', `Plazo fijo por ${plazoElegido} días`, montoAInvertir);
+                        const plazoFijo = {
+                            monto: montoAInvertir,
+                            plazo: plazoElegido,
+                            montoTotal: montoAPlazo,
+                        };
+                        plazosFijos.push(plazoFijo);
+
+                        Swal.fire({
+                            title: 'Constitucion de plazo exitosa!',
+                            text: 'Datos del Plazo Fijo:' + JSON.stringify(plazoFijo),
+                            icon: 'success',
+                            confirmButtonText: 'Aceptar',
+                        });
+                        //Si se realiza con exito se limpia el formulario, se oculta la seccion PF y se vuelve a la pagina principal
+                        document.getElementById('montoAInvertir').value = '';
+                        document.getElementById('plazoElegido').value = '';
+                        document.getElementById('seccionPlazoFijo').classList.add('oculto');
+                        document.getElementById('paginaPrincipal').classList.remove('oculto');
+                    } else if (result.dismiss === Swal.DismissReason.cancel) {
+                        Swal.fire({
+                            title: 'Operacion Cancelada',
+                            icon: 'error',
+                            confirmButtonText: 'Aceptar'
+                        });
+
+                        //Volver a la pagina principal
+                        document.getElementById('seccionPlazoFijo').classList.add('oculto');
+                        document.getElementById('paginaPrincipal').classList.remove('oculto');
+                    } else {
+                        Swal.fire({
+                            title: 'Fondos Insuficientes',
+                            text: 'No posee saldo suficiente para realizar la operación.',
+                            icon: 'error',
+                            confirmButtonText: 'Aceptar'
+                        });
+                    }
+                });
+            } else {
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Ingrese un plazo valido para realizar la operación.',
+                    icon: 'warning',
+                    confirmButtonText: 'Aceptar'
+                });
+            }
+        } else {
+            Swal.fire({
+                title: 'Fondos Insuficientes',
+                text: 'No posee saldo suficiente para realizar la operación.',
+                icon: 'error',
+                confirmButtonText: 'Aceptar'
+            });
+        }
+    });
+
 
     // botón "Cancelar" en la sección PF
     document.getElementById('cancelarPlazoFijo').addEventListener('click', function () {
-
+        document.getElementById('montoAInvertir').value = '';
+        document.getElementById('plazoElegido').value = '';
         // volver a la página principal
         document.getElementById('seccionPlazoFijo').classList.add('oculto');
         document.getElementById('paginaPrincipal').classList.remove('oculto');
 
     });
 
+    //evento click en la seccion Ultimos MOvimientos
+    document.getElementById('botonMovimientos').addEventListener('click', function () {
+        document.getElementById('paginaPrincipal').classList.add('oculto');
+        document.getElementById('seccionUltimosMovimientos').classList.remove('oculto');
+    });
+
+    // Mostrar sección de Últimos Movimientos al hacer click en el botón correspondiente
+    document.getElementById('botonUltimosMovimientos').addEventListener('click', function () {
+        mostrarUltimosMovimientos();
+    });
+
+    document.getElementById('volverAtras').addEventListener('click', function () {
+        limpiarUltimosMovimientos();
+
+        // volver a la página principal
+        document.getElementById('seccionUltimosMovimientos').classList.add('oculto');
+        document.getElementById('paginaPrincipal').classList.remove('oculto');
+
+    });
 });
-
-
-
-
-
-
